@@ -97,9 +97,9 @@ class _Register_ScreenState extends State<Register_Screen> {
                         child: const Icon(Icons.remove_red_eye_outlined)),
                   ),
                 ),
-                const SizedBox(
-                  height: 35,
-                ),
+                // const SizedBox(
+                //   height: 35,
+                // ),
                 SizedBox(
                   width: double.infinity,
                   height: 55.0,
