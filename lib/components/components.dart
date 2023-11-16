@@ -202,3 +202,14 @@ class Product {
 }
 
 */
+
+void showSnackBar(
+    BuildContext context, String message, int duration, Color? color) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: duration),
+      backgroundColor: color,
+    ),
+  );
+}

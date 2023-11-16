@@ -119,7 +119,11 @@ class _Register_ScreenState extends State<Register_Screen> {
                         if (e.code == 'weak-password') {
                           print('The password provided is too weak.');
                         } else if (e.code == 'email-already-in-use') {
-                          print('The account already exists for that email.');
+                          showSnackBar(
+                              context,
+                              'E-mail already in use, Go to login page and try to login with your account',
+                              5,
+                              Colors.deepPurpleAccent);
                         }
                       } catch (e) {
                         print(e);
