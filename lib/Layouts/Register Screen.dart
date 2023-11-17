@@ -119,13 +119,16 @@ class _Register_ScreenState extends State<Register_Screen> {
                           print('email: ' + emailcontroller.text);
                           print('pass: ' + passcontroller.text);
                         }
-                        try {
+                        setState(() {
                           isLoading = true;
-
+                        });
+                        try {
                           credintial().then((value) {
                             showSnackBar(context, 'Email created successfully',
                                 5, Colors.teal);
-                            isLoading = false;
+                            setState(() {
+                              isLoading = false;
+                            });
                           });
                         } on FirebaseAuthException catch (e) {
                           if (e.code == 'weak-password') {
@@ -146,12 +149,14 @@ class _Register_ScreenState extends State<Register_Screen> {
                         }
                       },
                       color: Colors.blue,
-                      child: const Text(
-                        'Register',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: isLoading == true
+                          ? CircularProgressIndicator()
+                          : Text(
+                              'Register',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(
