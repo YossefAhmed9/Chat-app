@@ -18,7 +18,7 @@ class _Register_ScreenState extends State<Register_Screen> {
   bool isLoading = false;
   var passcontroller = TextEditingController();
 
-  Future<UserCredential> credintial() async {
+  Future<UserCredential> register() async {
     return await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: emailcontroller.text,
       password: passcontroller.text,
@@ -123,7 +123,7 @@ class _Register_ScreenState extends State<Register_Screen> {
                           isLoading = true;
                         });
                         try {
-                          credintial().then((value) {
+                          register().then((value) {
                             showSnackBar(context, 'Email created successfully',
                                 5, Colors.teal);
                             setState(() {
@@ -138,6 +138,9 @@ class _Register_ScreenState extends State<Register_Screen> {
                                 5,
                                 Colors.red);
                           } else if (e.code == 'email-already-in-use') {
+                            setState(() {
+                              isLoading = false;
+                            });
                             showSnackBar(
                                 context,
                                 'E-mail already in use, Go to login page and try to login with your account',
