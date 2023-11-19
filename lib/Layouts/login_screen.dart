@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../components/components.dart';
+import 'chat screen.dart';
 
 class Login_Screen extends StatefulWidget {
   @override
@@ -20,11 +21,19 @@ class _Login_ScreenState extends State<Login_Screen> {
 
   var passcontroller = TextEditingController();
 
-  Future<UserCredential> login() async {
-    return await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailcontroller.text,
-      password: passcontroller.text,
-    );
+  Future<UserCredential?> login() async {
+    try {
+      return await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailcontroller.text, password: passcontroller.text);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        showSnackBar(context, 'No user found for that email.', 3, Colors.teal);
+      } else if (e.code == 'wrong-password') {
+        showSnackBar(
+            context, 'Wrong password provided for that user.', 3, Colors.teal);
+      }
+    }
+    return null;
   }
 
   @override
@@ -125,14 +134,16 @@ class _Login_ScreenState extends State<Login_Screen> {
                           isLoading = true;
                         });
                         await login().then((value) {
-                          showSnackBar(context, 'Login Successfully', 3,
-                              Colors.tealAccent);
+                          showSnackBar(
+                              context, 'Login Successfully', 3, Colors.teal);
+                        }).then((value) {
+                          navigateTo(context, ChatScreen());
                         });
                       },
                       color: Colors.blue,
                       child: isLoading == true
-                          ? CircularProgressIndicator()
-                          : Text(
+                          ? const CircularProgressIndicator()
+                          : const Text(
                               'LOGIN',
                               style: TextStyle(
                                 color: Colors.white,
