@@ -1,5 +1,4 @@
-import 'package:chat_app/Layouts/login_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chat_app/Layouts/chat%20screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +9,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
   runApp(const MyApp());
 }
 
@@ -27,7 +25,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Login_Screen(),
+      home: ChatScreen(),
     );
   }
 }
