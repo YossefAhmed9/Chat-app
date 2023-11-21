@@ -159,7 +159,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        navigateTo(context, Register_Screen());
+                        navigateAndDelPast(context, Register_Screen());
                       },
                       child: const Text(
                         'Register Now!',
