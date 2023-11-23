@@ -1,4 +1,5 @@
 import 'package:chat_app/components/components.dart';
+import 'package:chat_app/models/message%20model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -15,11 +16,13 @@ class _ChatScreenState extends State<ChatScreen> {
   TextEditingController chatController = TextEditingController();
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  ScrollController scrollController = ScrollController();
 
   CollectionReference messages =
       FirebaseFirestore.instance.collection('messages');
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
-  List data = [];
+
+  Query<Map<String, dynamic>> users =
+      FirebaseFirestore.instance.collection('messages').orderBy("asc");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,19 +31,24 @@ class _ChatScreenState extends State<ChatScreen> {
         title: const Text('Chat Screen'),
         centerTitle: true,
       ),
-      body: FutureBuilder<QuerySnapshot>(
-          future: messages.get(),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: messages.orderBy('createdAt').snapshots(),
           builder: (context, snapshot) {
-            data.add(snapshot.data?.docs[1]['message']);
             // print(snapshot.data?['message']);
+            List<dynamic> data = [];
             if (snapshot.hasData) {
+              for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                data.add(Message.fromJson(snapshot.data!.docs[i]));
+              }
+
               return SafeArea(
                 child: Column(
                   children: [
                     Expanded(
                       child: ListView.builder(
+                        controller: scrollController,
                         scrollDirection: Axis.vertical,
-                        itemCount: 15,
+                        itemCount: data.length,
                         itemBuilder: (context, index) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
@@ -62,7 +70,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 child: Padding(
                                   padding: EdgeInsets.all(12.0),
                                   child: Text(
-                                    '${data[1]}',
+                                    '${data[index].message}',
                                     style: TextStyle(
                                         fontSize: 15, color: Colors.white),
                                     softWrap: true,
@@ -83,9 +91,14 @@ class _ChatScreenState extends State<ChatScreen> {
                               (value) {
                             setState(() {
                               messages.add({
-                                'message': chatController.text, // John Doe
+                                'message': chatController.text,
+                                'createdAt': DateTime.now() // John Doe
                               }).then((value) {
                                 chatController.clear();
+                                scrollController.animateTo(
+                                    scrollController.position.maxScrollExtent,
+                                    duration: Duration(milliseconds: 1),
+                                    curve: Curves.fastEaseInToSlowEaseOut);
                               });
                             });
                           },
@@ -102,11 +115,15 @@ class _ChatScreenState extends State<ChatScreen> {
                               onPressed: () {
                                 setState(() {
                                   messages.add({
-                                    'message': chatController.text, // John Doe
+                                    'message': chatController.text,
+                                    'createdAt': DateTime.now() // John Doe
                                   }).then((value) {
-                                    setState(() {
-                                      chatController.clear();
-                                    });
+                                    chatController.clear();
+                                    scrollController.animateTo(
+                                        scrollController
+                                            .position.maxScrollExtent,
+                                        duration: Duration(milliseconds: 1),
+                                        curve: Curves.fastEaseInToSlowEaseOut);
                                   });
                                 });
                               },
