@@ -243,17 +243,17 @@ Widget ChatBubble(int index, List data) => Column(
       ],
     );
 Widget SenderChatBubble(int index, List data) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: const EdgeInsets.only(
-              bottom: 8.0, left: 8.0, right: 55.0, top: 8.0),
+              bottom: 8.0, right: 8.0, left: 55.0, top: 8.0),
           child: Container(
             decoration: const BoxDecoration(
-                color: Colors.teal,
+                color: Colors.green,
                 borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(25),
+                  bottomLeft: Radius.circular(25),
                   topLeft: Radius.circular(25),
                   topRight: Radius.circular(25),
                 )),

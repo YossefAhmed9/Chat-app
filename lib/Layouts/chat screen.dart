@@ -21,10 +21,9 @@ class _ChatScreenState extends State<ChatScreen> {
   CollectionReference messages =
       FirebaseFirestore.instance.collection('messages');
 
-  Query<Map<String, dynamic>> users =
-      FirebaseFirestore.instance.collection('messages').orderBy("asc");
   @override
   Widget build(BuildContext context) {
+    var email = ModalRoute.of(context)?.settings.arguments;
     return Scaffold(
       appBar: AppBar(
         elevation: 3,
@@ -32,10 +31,10 @@ class _ChatScreenState extends State<ChatScreen> {
         centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
-          stream: messages.orderBy('createdAt').snapshots(),
+          stream: messages.orderBy('createdAt', descending: true).snapshots(),
           builder: (context, snapshot) {
             // print(snapshot.data?['message']);
-            List<dynamic> data = [];
+            List<Message> data = [];
             if (snapshot.hasData) {
               for (int i = 0; i < snapshot.data!.docs.length; i++) {
                 data.add(Message.fromJson(snapshot.data!.docs[i]));
@@ -46,11 +45,17 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     Expanded(
                       child: ListView.builder(
+                          reverse: true,
                           controller: scrollController,
                           scrollDirection: Axis.vertical,
                           itemCount: data.length,
-                          itemBuilder: (context, index) =>
-                              ChatBubble(index, data)),
+                          itemBuilder: (context, index) {
+                            if (data[index].id == email) {
+                              return ChatBubble(index, data);
+                            } else {
+                              return SenderChatBubble(index, data);
+                            }
+                          }),
                     ),
                     Row(
                       children: [
@@ -61,11 +66,13 @@ class _ChatScreenState extends State<ChatScreen> {
                             setState(() {
                               messages.add({
                                 'message': chatController.text,
-                                'createdAt': DateTime.now() // John Doe
+                                'createdAt': DateTime.now(),
+                                'id': email // John Doe
                               }).then((value) {
+                                print('email is $email 🎎🎎🎎🎎🎎🎎🎎🎎🎎🎎');
                                 chatController.clear();
                                 scrollController.animateTo(
-                                    scrollController.position.maxScrollExtent,
+                                    scrollController.position.minScrollExtent,
                                     duration: Duration(milliseconds: 1),
                                     curve: Curves.fastEaseInToSlowEaseOut);
                               });
@@ -85,8 +92,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                 setState(() {
                                   messages.add({
                                     'message': chatController.text,
-                                    'createdAt': DateTime.now() // John Doe
+                                    'createdAt': DateTime.now(),
+                                    'id': email // John Doe
                                   }).then((value) {
+                                    print(
+                                        'email is $email 🎎🎎🎎🎎🎎🎎🎎🎎🎎🎎');
                                     chatController.clear();
                                     scrollController.animateTo(
                                         scrollController

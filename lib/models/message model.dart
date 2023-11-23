@@ -1,9 +1,11 @@
 class Message {
   dynamic message;
 
-  Message(this.message);
+  dynamic id;
+
+  Message(this.message, this.id);
 
   factory Message.fromJson(dynamic json) {
-    return Message(json['message']);
+    return Message(json['message'], json['id']);
   }
 }
