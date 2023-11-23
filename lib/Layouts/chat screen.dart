@@ -46,42 +46,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     Expanded(
                       child: ListView.builder(
-                        controller: scrollController,
-                        scrollDirection: Axis.vertical,
-                        itemCount: data.length,
-                        itemBuilder: (context, index) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  bottom: 8.0,
-                                  left: 8.0,
-                                  right: 55.0,
-                                  top: 8.0),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                    color: Colors.teal,
-                                    borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(25),
-                                      topLeft: Radius.circular(25),
-                                      topRight: Radius.circular(25),
-                                    )),
-                                child: Padding(
-                                  padding: EdgeInsets.all(12.0),
-                                  child: Text(
-                                    '${data[index].message}',
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.white),
-                                    softWrap: true,
-                                    maxLines: 5,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                          controller: scrollController,
+                          scrollDirection: Axis.vertical,
+                          itemCount: data.length,
+                          itemBuilder: (context, index) =>
+                              ChatBubble(index, data)),
                     ),
                     Row(
                       children: [

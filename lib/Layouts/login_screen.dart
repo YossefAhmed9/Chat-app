@@ -1,11 +1,13 @@
-import 'package:chat_app/Layouts/Register%20Screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../components/components.dart';
-import 'chat screen.dart';
 
 class Login_Screen extends StatefulWidget {
+  Login_Screen({super.key});
+
+  String id = 'LoginPage';
+
   @override
   State<Login_Screen> createState() => _Login_ScreenState();
 }
@@ -15,10 +17,9 @@ class _Login_ScreenState extends State<Login_Screen> {
   var formKey = GlobalKey<FormState>();
   var emailKey = GlobalKey<FormState>();
   var passKey = GlobalKey<FormState>();
+  var passcontroller = TextEditingController();
   bool showpass = true;
   bool isLoading = false;
-
-  var passcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   TextInputType.emailAddress,
                   emailcontroller,
                   (value) {
-                    print(value);
+                    emailcontroller.text = value!;
                   },
                   (value) {
                     print(value);
@@ -120,7 +121,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                         await FirebaseAuth.instance.signInWithEmailAndPassword(
                             email: emailcontroller.text,
                             password: passcontroller.text);
-                        navigateTo(context, ChatScreen());
+                        Navigator.pushNamed(context, 'ChatScreen',
+                            arguments: emailcontroller.text);
                       } on FirebaseAuthException catch (e) {
                         if (e.code == 'user-not-found') {
                           showSnackBar(context, 'No user found for that email.',
@@ -159,7 +161,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        navigateAndDelPast(context, Register_Screen());
+                        Navigator.pushNamed(context, 'RegisterPage');
                       },
                       child: const Text(
                         'Register Now!',
