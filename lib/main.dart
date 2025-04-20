@@ -1,5 +1,6 @@
 import 'package:chat_app/Layouts/Register%20Screen.dart';
 import 'package:chat_app/Layouts/chat%20screen.dart';
+import 'package:chat_app/users%20screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
       home: Login_Screen(),

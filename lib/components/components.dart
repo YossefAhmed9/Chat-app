@@ -47,10 +47,12 @@ Widget defaultTextFormField(
       onChanged: change,
       onTap: tap,
       validator: validate,
+      scrollPhysics: BouncingScrollPhysics(),
+
       decoration: InputDecoration(
         labelText: label,
         border: border,
-        prefixIcon: prefix,
+        prefixIcon: prefix
       ),
     );
 
