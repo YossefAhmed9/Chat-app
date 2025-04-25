@@ -74,20 +74,23 @@ class _ChatScreenState extends State<ChatScreen> {
                         Expanded(
                           child: Column(
 
+                            mainAxisSize: MainAxisSize.min,
+
                             children: [
                               defaultTextFormField(
-                                  chatKey, TextInputType.name, chatController,
-                                  (value) {
+                                  key: chatKey,
+                                  keyboard:  TextInputType.name,
+                                  controller: chatController,
+                                 change:  (value) {
                                     print(value);
                               },
-                                  (p0) => null,
-                                  () {},
-                                  'Type your message...',
-                                  InputBorder.none,
-                                  const Icon(Icons.message_outlined),
-                                  (value) => null),
+                              submit:  (p0) => null,
+                               tap :  () {},
+                                  label: 'Type your message...',
+                                 border:  InputBorder.none,
+                                prefix:   const Icon(Icons.message_outlined),
+                                 validate:  (value) => null),
                             ],
-                            mainAxisSize: MainAxisSize.min,
                           ),
                         ),
                         Padding(

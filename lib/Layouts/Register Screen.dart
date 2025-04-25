@@ -1,22 +1,34 @@
+import 'package:chat_app/Layouts/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../components/components.dart';
 
-class Register_Screen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   @override
-  State<Register_Screen> createState() => _Register_ScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _Register_ScreenState extends State<Register_Screen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   var emailcontroller = TextEditingController();
+  var passcontroller = TextEditingController();
+    var confirmPassController = TextEditingController();
+  var namecontroller = TextEditingController();
+  var phonecontroller = TextEditingController();
+  var gendercontroller = TextEditingController();
+  var userController = TextEditingController();
+
   var formKey = GlobalKey<FormState>();
   var emailKey = GlobalKey<FormState>();
   var passKey = GlobalKey<FormState>();
+  var nameKey = GlobalKey<FormState>();
+  var phoneKey = GlobalKey<FormState>();
+  var genderKey = GlobalKey<FormState>();
+  var userKey = GlobalKey<FormState>();
   bool showpass = true;
   bool isLoading = false;
-  var passcontroller = TextEditingController();
+  String gender =' ';
 
   Future<UserCredential> register() async {
     return await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -31,10 +43,9 @@ class _Register_ScreenState extends State<Register_Screen> {
       appBar: AppBar(
         title: const Text('Register form'),
       ),
-      body: ModalProgressHUD(
-        inAsyncCall: isLoading,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
+      body:Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Center(
           child: SingleChildScrollView(
             child: Form(
               key: formKey,
@@ -42,42 +53,128 @@ class _Register_ScreenState extends State<Register_Screen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Text(
-                    'Register',
+                    'Register Now!',
                     style: TextStyle(
                       color: Colors.black,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w700,
                       fontSize: 50.0,
+                    ),
+                  ),
+                  const Text(
+                    'Register now to connect with your friends',
+                    style: TextStyle(
+                      color: Colors.black26,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15.0,
                     ),
                   ),
                   const SizedBox(
                     height: 50,
                   ),
                   defaultTextFormField(
-                    emailKey,
-                    TextInputType.emailAddress,
-                    emailcontroller,
-                    (value) {
+                    key:  emailKey,
+                    keyboard:  TextInputType.emailAddress,
+                    controller:  emailcontroller,
+                    change:  (value) {
+                      emailcontroller.text = value!;
+                    },
+                    submit:  (value) {
                       print(value);
                     },
-                    (value) {
-                      print(value);
-                    },
-                    () {},
-                    'Email',
-                    const OutlineInputBorder(),
-                    const Icon(
+                    tap:  () {},
+                    label:  'Email',
+                    border:  OutlineInputBorder(borderRadius: BorderRadius.circular(35)),
+                    prefix:  const Icon(
                       Icons.email_rounded,
                     ),
-                    (value) {
+                    validate:  (value) {
                       if (value!.isEmpty) {
                         return ('Email must be filled');
                       }
                       return null;
                     },
                   ),
+                  const SizedBox(height: 15,),
+
+                  defaultTextFormField(
+
+                    controller: userController,
+                    label: 'username',
+                    key: userKey,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                    change: (value){},
+                    keyboard: TextInputType.text,
+                    prefix: Icon(Icons.person),
+                    submit: (value){
+
+                    },
+                    tap: (){},
+                    validate:  (value) {
+                      if (value!.isEmpty) {
+                        return ('Password must be filled');
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 20,),
+                  //phone
+                  defaultTextFormField(
+                    key: phoneKey,
+                    keyboard: TextInputType.number,
+                    controller: phonecontroller,
+                    submit: (value){},
+                    change: (value){},
+                    tap: (){},
+                    label: 'Enter your phone number',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(35),
+                    ),
+                    prefix: Icon(Icons.phone),
+                    validate:  (value) {
+                      if (value!.isEmpty) {
+                        return ('phone must be filled');
+                      }
+                      return null;
+                    },),
                   const SizedBox(
                     height: 20,
                   ),
+                  //الكلية
+                  DropdownButtonFormField(
+                    validator: (value) {
+                      if (value == ' ') {
+                        return ('Select Gender');
+                      }
+                      return null;
+                    },
+                    value: gender,
+                    items: [
+                      ' ',
+                      'male',
+                      'female',
+                    ]
+                        .map((role) => DropdownMenuItem(
+                      value: role,
+                      child: Text(role),
+                    ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        gender = value!;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Select Gender',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(35),
+                      ),
+                      prefixIcon: const Icon(Icons.list),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  //pass
                   TextFormField(
                     controller: passcontroller,
                     keyboardType: TextInputType.visiblePassword,
@@ -96,7 +193,7 @@ class _Register_ScreenState extends State<Register_Screen> {
                     },
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      border: const OutlineInputBorder(),
+                      border:  OutlineInputBorder(borderRadius: BorderRadius.circular(35)),
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: GestureDetector(
                           onTap: () {
@@ -108,9 +205,48 @@ class _Register_ScreenState extends State<Register_Screen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 35,
+                    height: 15,
                   ),
-                  SizedBox(
+                  //confirm pass
+                  TextFormField(
+                    controller: confirmPassController,
+                    keyboardType: TextInputType.visiblePassword,
+                    onFieldSubmitted: (value) {
+                      print(value);
+                    },
+                    onChanged: (value) {
+                      print(value);
+                    },
+                    obscureText: showpass,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return ('Password must be filled');
+                      }
+                      if (passcontroller.text != confirmPassController.text) {
+                        return ('passwords don\'t match\ ');
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      border:  OutlineInputBorder(borderRadius: BorderRadius.circular(35)),
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              showpass = !showpass;
+                            });
+                          },
+                          child: const Icon(Icons.remove_red_eye_outlined)),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.teal,borderRadius: BorderRadius.circular(25),
+                    ),
                     width: double.infinity,
                     height: 55.0,
                     child: MaterialButton(
@@ -119,44 +255,43 @@ class _Register_ScreenState extends State<Register_Screen> {
                           print('email: ' + emailcontroller.text);
                           print('pass: ' + passcontroller.text);
                         }
-                        setState(() {
-                          isLoading = true;
-                        });
                         try {
-                          register().then((value) {
-                            showSnackBar(context, 'Email created successfully',
-                                5, Colors.teal);
+                          await FirebaseAuth.instance.signInWithEmailAndPassword(
+                              email: emailcontroller.text,
+                              password: passcontroller.text).then((value){
                             setState(() {
-                              isLoading = false;
+
+                              Navigator.push(context, CupertinoPageRoute(builder: (context)=>LoginScreen()));
+
                             });
+                            // Navigator.pushNamed(context, 'ChatScreen',
+                            //     arguments: emailcontroller.text);
                           });
+
+
+
                         } on FirebaseAuthException catch (e) {
-                          if (e.code == 'weak-password') {
+                          if (e.code == 'user-not-found') {
+                            showSnackBar(context, 'No user found for that email.',
+                                5, Colors.red);
+                          } else if (e.code == 'wrong-password') {
                             showSnackBar(
                                 context,
-                                'The password provided is too weak.',
+                                'Wrong password provided for that user.',
                                 5,
                                 Colors.red);
-                          } else if (e.code == 'email-already-in-use') {
-                            showSnackBar(
-                                context,
-                                'E-mail already in use, Go to login page and try to login with your account',
-                                5,
-                                Colors.deepPurpleAccent);
                           }
-                        } catch (e) {
-                          print(e);
                         }
                       },
-                      color: Colors.blue,
-                      child: isLoading == true
-                          ? CircularProgressIndicator()
-                          : Text(
-                              'Register',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
+                      child: const Text(
+                        'Register',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          letterSpacing: 5,
+                          fontFamily: 'poppins'
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -166,7 +301,7 @@ class _Register_ScreenState extends State<Register_Screen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
-                        'Already have an account?',
+                        'Don\'t have an account?',
                         style: TextStyle(
                           fontSize: 18.0,
                         ),
@@ -182,9 +317,7 @@ class _Register_ScreenState extends State<Register_Screen> {
                       ),
                     ],
                   ),
-                  // defaultButton(double.infinity, 50.0, Colors.red, () {
-                  //   print('heeeeelo');
-                  // }, 'Register', Colors.white, 18),
+
                 ],
               ),
             ),

@@ -1,18 +1,25 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
+import '../cache/cashe_keys.dart';
+import '../cache/shared_prefrence.dart';
 import '../components/components.dart';
+import 'Home Screen.dart';
 
-class Login_Screen extends StatefulWidget {
-  Login_Screen({super.key});
+class LoginScreen extends StatefulWidget {
+  LoginScreen({super.key});
 
   String id = 'LoginPage';
 
   @override
-  State<Login_Screen> createState() => _Login_ScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _Login_ScreenState extends State<Login_Screen> {
+class _LoginScreenState extends State<LoginScreen> {
   var emailcontroller = TextEditingController();
   var formKey = GlobalKey<FormState>();
   var emailKey = GlobalKey<FormState>();
@@ -20,6 +27,22 @@ class _Login_ScreenState extends State<Login_Screen> {
   var passcontroller = TextEditingController();
   bool showpass = true;
   //bool isLoading = false;
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,22 +79,22 @@ class _Login_ScreenState extends State<Login_Screen> {
                     height: 50,
                   ),
                   defaultTextFormField(
-                    emailKey,
-                    TextInputType.emailAddress,
-                    emailcontroller,
-                    (value) {
+                   key:  emailKey,
+                    keyboard:  TextInputType.emailAddress,
+                   controller:  emailcontroller,
+                   change:  (value) {
                       emailcontroller.text = value!;
                     },
-                    (value) {
+                   submit:  (value) {
                       print(value);
                     },
-                    () {},
-                    'Email',
-                   OutlineInputBorder(borderRadius: BorderRadius.circular(35)),
-                    const Icon(
+                   tap:  () {},
+                   label:  'Email',
+                  border:  OutlineInputBorder(borderRadius: BorderRadius.circular(35)),
+                   prefix:  const Icon(
                       Icons.email_rounded,
                     ),
-                    (value) {
+                   validate:  (value) {
                       if (value!.isEmpty) {
                         return ('Email must be filled');
                       }
@@ -125,16 +148,24 @@ class _Login_ScreenState extends State<Login_Screen> {
                           print('email: ' + emailcontroller.text);
                           print('pass: ' + passcontroller.text);
                         }
-                        setState(() {
-                          // isLoading = true;
-                        });
-
                         try {
                           await FirebaseAuth.instance.signInWithEmailAndPassword(
                               email: emailcontroller.text,
-                              password: passcontroller.text);
-                          Navigator.pushNamed(context, 'ChatScreen',
-                              arguments: emailcontroller.text);
+                              password: passcontroller.text).then((value){
+                                setState(() {
+                                  CacheHelper.setBoolean(key: CacheKeys.loginDone, value: true);
+                                  CacheHelper.setBoolean(key: CacheKeys.email, value: emailcontroller.text);
+                                  print('333333333333333333');
+                                  print('entered set state');
+                                  Navigator.push(context, CupertinoPageRoute(builder: (context)=>HomeScreen()));
+
+                                });
+                                // Navigator.pushNamed(context, 'ChatScreen',
+                                //     arguments: emailcontroller.text);
+                          });
+
+
+
                         } on FirebaseAuthException catch (e) {
                           if (e.code == 'user-not-found') {
                             showSnackBar(context, 'No user found for that email.',
@@ -179,9 +210,31 @@ class _Login_ScreenState extends State<Login_Screen> {
                       ),
                     ],
                   ),
-                  // defaultButton(double.infinity, 50.0, Colors.red, () {
-                  //   print('heeeeelo');
-                  // }, 'Register', Colors.white, 18),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(25),color: Colors.teal.shade600),
+                      child: MaterialButton(onPressed: (){
+                        signInWithGoogle().then((value){
+                          Navigator.pushNamed(context, 'ChatScreen',arguments: emailcontroller.text);
+                          if (kDebugMode) {
+                            print('########################################################');
+                            print(value);
+                            print(value.credential);
+                            print(value.additionalUserInfo);
+                            print(value.user);
+                            print('########################################################');
+                          }
+                        });
+                      },
+                        child: Text('Sign in with google account',style: TextStyle(color: Colors.white),),),
+                    ),
+                  ),
+                  Text('Emails'),
+                  Text('yossefahmed209@gmail.com'),
+                  Text('yabdullah@student.eelu.edu.eg'),
+                  Text('pass for both'),
+                  Text('123456789'),
                 ],
               ),
             ),

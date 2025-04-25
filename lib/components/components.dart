@@ -27,18 +27,18 @@ class DefaultTextFormField {
   });
 }
 
-Widget defaultTextFormField(
-  final Key? key,
-  final TextInputType keyboard,
-  final TextEditingController controller,
-  final Function(String?) submit,
-  final Function(String?) change,
-  final GestureTapCallback? tap,
-  final String label,
-  final InputBorder border,
-  final Icon prefix,
-  final FormFieldValidator<String>? validate,
-) =>
+Widget defaultTextFormField({
+  required final Key? key,
+  required final TextInputType keyboard,
+  required final TextEditingController controller,
+  required final Function(String?) submit,
+  required final Function(String?) change,
+  required final GestureTapCallback? tap,
+  required final String label,
+  required final InputBorder border,
+  required final Icon prefix,
+  required final FormFieldValidator<String>? validate,
+}) =>
     TextFormField(
       key: key,
       keyboardType: keyboard,
